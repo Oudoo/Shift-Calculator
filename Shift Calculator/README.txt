@@ -1,0 +1,1 @@
+Shift Calculator bundle: upload all files to your site root. Replace icons if desired. Use HTTPS for PWA features.
