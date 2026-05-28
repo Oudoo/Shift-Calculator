@@ -2,103 +2,243 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Shift Calculator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WorkShift Calculator</title>
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0b66c3" id="meta-theme-color">
 
 <style>
+/* ============================ THEME TOKENS ============================ */
 :root{
-  --bg:#fff;--text:#111;--muted:#666;--accent:#0b66c3;--card:#fff;--panel:#fafafa;
-  --transition-fast:220ms ease;
+  --bg:#eef2f7;
+  --text:#0f1720;
+  --muted:#5b6b80;
+  --accent:#0b66c3;
+  --accent-2:#1e88ff;
+  --card:#ffffff;
+  --panel:#f5f8fc;
+  --border:rgba(15,23,32,0.08);
+  --shadow:0 10px 30px rgba(15,23,42,0.08);
+
+  --good:#0f9d58;       --good-bg:#e7f7ee;   --good-bd:#bde8cf;
+  --bad:#e0392b;        --bad-bg:#fdeceb;    --bad-bd:#f6c9c4;
+  --warn:#d97706;       --warn-bg:#fff4e0;   --warn-bd:#f6dcab;
+  --neutral:#5b6b80;    --neutral-bg:#eef2f7;--neutral-bd:#d8e0ec;
+
+  --input-bg:#ffffff;
+  --input-border:rgba(15,23,32,0.14);
+  --input-text:var(--text);
+  --input-placeholder:rgba(15,23,32,0.4);
+  --focus-ring:rgba(11,102,195,0.18);
+
+  --transition-fast:200ms ease;
 }
 
-/* DARK THEME */
+/* ============================== DARK THEME ============================== */
 [data-theme="dark"]{
-  --bg:#0f1720;
+  --bg:#0a0f16;
   --text:#e6eef6;
   --muted:#9fb0c8;
-  --card:#0b1220;
-  --panel:#08121a;
   --accent:#2b8fff;
+  --accent-2:#1e88ff;
+  --card:#0f1822;
+  --panel:#0b131c;
+  --border:rgba(255,255,255,0.08);
+  --shadow:0 14px 40px rgba(0,0,0,0.45);
 
-  /* make input backgrounds light and text dark for readability */
+  --good:#33c27f;       --good-bg:rgba(15,157,88,0.16);   --good-bd:rgba(51,194,127,0.35);
+  --bad:#ff6b5e;        --bad-bg:rgba(224,57,43,0.16);    --bad-bd:rgba(255,107,94,0.35);
+  --warn:#ffa733;       --warn-bg:rgba(217,119,6,0.18);   --warn-bd:rgba(255,167,51,0.35);
+  --neutral:#9fb0c8;    --neutral-bg:rgba(159,176,200,0.12);--neutral-bd:rgba(159,176,200,0.3);
+
+  /* keep input surfaces light + dark text for maximum readability */
   --input-bg:#dfe6ee;
-  --input-border:rgba(255,255,255,0.12);
-  --input-text:#111;           /* <- dark text inside inputs */
-  --input-placeholder:rgba(17,17,17,0.35);
-  --focus-ring:rgba(43,140,255,0.35);
-}
-
-/* LIGHT (default) */
-:root{
-  --input-bg:#ffffff;
-  --input-border:rgba(0,0,0,0.12);
-  --input-text:var(--text);
-  --input-placeholder:rgba(0,0,0,0.35);
-  --focus-ring:rgba(11,102,195,0.14);
+  --input-border:rgba(255,255,255,0.14);
+  --input-text:#111;
+  --input-placeholder:rgba(17,17,17,0.4);
+  --focus-ring:rgba(43,140,255,0.4);
 }
 
 *{box-sizing:border-box}
+html,body{margin:0}
 body{
-  margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
-  background:var(--bg);color:var(--text);padding:12px;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(43,140,255,0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(11,102,195,0.10), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  padding:16px;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
   transition:background var(--transition-fast),color var(--transition-fast);
 }
-.card{max-width:720px;margin:0 auto;border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:14px;background:var(--card);transition:background var(--transition-fast),border-color var(--transition-fast)}
-h1{margin:0 0 10px 0;font-size:18px;padding:8px;background:var(--accent);color:#fff;border-radius:6px;display:flex;justify-content:space-between;align-items:center}
-.grid{display:grid;grid-template-columns:200px 1fr;gap:10px;align-items:start}
-label{font-weight:700;display:block;margin-bottom:6px}
+.app{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 
-/* general form controls */
-input,select,button{
-  font-size:14px;padding:8px;border-radius:6px;background:var(--input-bg);
-  color:var(--input-text);border:1px solid var(--input-border);
-  transition:background var(--transition-fast),color var(--transition-fast),box-shadow var(--transition-fast),border-color var(--transition-fast);
+/* ============================== HEADER ============================== */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 18px;border-radius:16px;color:#fff;box-shadow:var(--shadow);
+  background:linear-gradient(135deg,var(--accent-2),var(--accent));
 }
-input[type="datetime-local"]{padding:6px}
-.muted{color:var(--muted);font-size:13px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-button.primary{background:var(--accent);color:#fff;border:none}
-button.ghost{background:transparent}
-.info{margin-top:10px;padding:8px;border-radius:6px;background:var(--panel);border:1px solid rgba(0,0,0,0.04)}
-.warn{color:#b33;font-weight:700}
-.good{color:#117a3f;font-weight:700}
-.timeline{height:36px;background:linear-gradient(90deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));border-radius:6px;position:relative;margin-top:10px;overflow:hidden}
-.seg{position:absolute;top:0;height:100%;display:block;border-radius:3px}
-.scheduled{background:#cfe8ff}
-.actual{background:#d6ffd8}
-.missing{background:#ffd9d9}
-.overtime{background:#ffe4b3}
-.summary{margin-top:12px;padding:10px;border-radius:6px;background:var(--card);border:1px solid rgba(0,0,0,0.04)}
-.small{font-size:13px;color:var(--muted)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{
+  width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+  font-size:22px;background:rgba(255,255,255,0.18);backdrop-filter:blur(4px);flex:none;
+}
+.brand h1{margin:0;font-size:19px;font-weight:800;letter-spacing:.2px;line-height:1.15}
+.brand .sub{margin:2px 0 0;font-size:12.5px;opacity:.85;font-weight:500}
+.theme-btn{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;flex:none;
+  background:rgba(255,255,255,0.16);color:#fff;border:1px solid rgba(255,255,255,0.25);
+  padding:8px 12px;border-radius:999px;font-size:13px;font-weight:700;
+  transition:background var(--transition-fast),transform var(--transition-fast);
+}
+.theme-btn:hover{background:rgba(255,255,255,0.26)}
+.theme-btn:active{transform:scale(.96)}
 
-@media (max-width:680px){ .grid{grid-template-columns:1fr} h1{font-size:16px;flex-direction:row-reverse} }
+/* ============================== CARDS ============================== */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:18px;box-shadow:var(--shadow);
+  transition:background var(--transition-fast),border-color var(--transition-fast);
+}
+.card-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;margin:0 0 14px}
+.card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
 
-input:focus,select:focus,button:focus{
-  outline:none;box-shadow:0 0 0 4px var(--focus-ring);border-color:rgba(11,102,195,0.28);
+/* ============================== FORM ============================== */
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+label{font-weight:700;font-size:13.5px}
+.hint{font-size:12px;color:var(--muted);font-weight:500}
+
+input,select,button,textarea{
+  font:inherit;font-size:14px;padding:11px 12px;border-radius:11px;
+  background:var(--input-bg);color:var(--input-text);
+  border:1px solid var(--input-border);
+  transition:background var(--transition-fast),color var(--transition-fast),
+             box-shadow var(--transition-fast),border-color var(--transition-fast),transform var(--transition-fast);
+}
+input[type="datetime-local"]{padding:9px 12px}
+input:focus,select:focus,button:focus,textarea:focus{
+  outline:none;box-shadow:0 0 0 4px var(--focus-ring);border-color:var(--accent);
+}
+select{
+  -webkit-appearance:none;appearance:none;padding-right:38px;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23667' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;background-position:calc(100% - 14px) center;background-size:11px 8px;
+}
+input:disabled,select:disabled{
+  opacity:1;cursor:not-allowed;background:var(--panel);
+  color:var(--muted);border-style:dashed;
+}
+[data-theme="dark"] input:disabled,[data-theme="dark"] select:disabled{
+  background:#c5cdd6;color:#3a4654;-webkit-text-fill-color:#3a4654;
 }
 
-.icon-btn{background:transparent;border:0;color:inherit;padding:6px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.theme-label{font-weight:700;font-size:13px;padding:4px 8px;border-radius:6px}
-:root .theme-label{ color:#fff; background: rgba(0,0,0,0.08) }
-[data-theme="dark"] .theme-label{ color:#111; background: rgba(255,255,255,0.9) }
-select{ -webkit-appearance:none; appearance:none; padding-right:34px; background-repeat:no-repeat; background-position:calc(100% - 12px) center; background-size:10px; }
+.shift-row{display:flex;align-items:center;gap:8px}
+.shift-row input{width:84px;text-align:center;font-weight:700}
+.shift-row .unit{font-size:13px;color:var(--muted);font-weight:600}
+.lock{margin-left:auto;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;font-weight:600}
 
-/* ========== DARK-MODE SPECIFIC TARGETS FOR ALL INPUT TEXT ========== */
-/* Force dark visible text inside inputs, datetime controls, placeholders and caret */
-/* Regular inputs and selects */
-[data-theme="dark"] input,
-[data-theme="dark"] select,
-[data-theme="dark"] textarea {
-  color: #111 !important;
-  background: var(--input-bg) !important;
-  border-color: var(--input-border) !important;
-  caret-color: #111 !important;
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+button{cursor:pointer;font-weight:700}
+button:active{transform:scale(.97)}
+button.primary{background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#fff;border:none;box-shadow:0 6px 16px rgba(11,102,195,0.28)}
+button.ghost{background:transparent;color:var(--text);border:1px solid var(--input-border)}
+[data-theme="dark"] button.ghost{color:var(--text);border-color:var(--border)}
+button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad-bd)}
+
+/* ============================== LIVE TIMER ============================== */
+.live{
+  margin-top:14px;padding:14px 16px;border-radius:13px;font-weight:800;
+  font-variant-numeric:tabular-nums;letter-spacing:.2px;font-size:15px;
+  display:flex;align-items:center;gap:10px;border:1px solid var(--neutral-bd);
+  background:var(--neutral-bg);color:var(--text);
 }
+.live-remaining{background:var(--neutral-bg);border-color:var(--neutral-bd)}
+.live-overtime{
+  background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn);
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,0)}50%{box-shadow:0 0 0 5px rgba(217,119,6,0.12)}}
 
-/* datetime-local / webkit internal editable parts */
+/* ============================== TIMELINE ============================== */
+.timeline-wrap{margin-top:4px}
+.timeline-track{position:relative;display:flex;flex-direction:column;gap:8px;padding:4px 0}
+.tl-row{position:relative;height:16px;border-radius:999px;background:var(--panel);border:1px solid var(--border);overflow:hidden}
+.tl-fill{position:absolute;top:0;height:100%;border-radius:999px;transition:left .5s ease,width .5s ease}
+.tl-fill.scheduled{background:linear-gradient(90deg,rgba(43,140,255,.55),rgba(11,102,195,.75))}
+.tl-fill.actual{background:linear-gradient(90deg,var(--good),#2bbd7a)}
+.tl-fill.missing{background:repeating-linear-gradient(45deg,var(--bad),var(--bad) 6px,rgba(224,57,43,.7) 6px,rgba(224,57,43,.7) 12px)}
+.tl-fill.overtime{background:linear-gradient(90deg,#f59e0b,var(--warn))}
+.tl-rowlabel{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);pointer-events:none}
+.timeline-markers{position:relative;height:46px;margin-top:6px}
+.marker{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;max-width:120px}
+.marker .tick{width:2px;height:12px;border-radius:2px;background:var(--muted)}
+.marker .mlabel{font-size:11px;font-weight:800;white-space:nowrap}
+.marker .mtime{font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+.marker.m-login .tick{background:var(--accent)}
+.marker.m-expected .tick{background:var(--warn)}
+.marker.m-actual .tick{background:var(--good)}
+.tl-empty{font-size:13px;color:var(--muted);padding:8px 2px}
+
+/* ============================== SUMMARY ============================== */
+.summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.summary-title{font-weight:800;font-size:15px}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid}
+.tag.good{color:var(--good);background:var(--good-bg);border-color:var(--good-bd)}
+.tag.bad{color:var(--bad);background:var(--bad-bg);border-color:var(--bad-bd)}
+.tag.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn-bd)}
+.tag.neutral{color:var(--neutral);background:var(--neutral-bg);border-color:var(--neutral-bd)}
+.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.s-item{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:11px 13px}
+.s-item .k{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700}
+.s-item .v{font-size:15px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
+.s-item.full{grid-column:1/-1}
+
+/* ============================== METRICS ============================== */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.metric{border-radius:14px;padding:14px 16px;border:1px solid}
+.metric.ot{background:var(--warn-bg);border-color:var(--warn-bd)}
+.metric.def{background:var(--bad-bg);border-color:var(--bad-bd)}
+.metric .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px}
+.metric.ot .label{color:var(--warn)} .metric.def .label{color:var(--bad)}
+.metric .value{font-size:24px;font-weight:900;margin-top:6px;font-variant-numeric:tabular-nums}
+.metric.ot .value{color:var(--warn)} .metric.def .value{color:var(--bad)}
+
+/* ============================== HISTORY ============================== */
+.history-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.history-head .chev{transition:transform var(--transition-fast);font-size:13px;color:var(--muted)}
+.history-list.collapsed{display:none}
+.history-list{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow-y:auto;margin-top:14px;padding-right:2px}
+.log{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:13px;background:var(--panel)}
+.log-main{min-width:0;flex:1}
+.log-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.log-date{font-weight:800;font-size:13.5px}
+.log-role{font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--accent);color:#fff}
+.log-role.HQ{background:#6d4bd1}
+.log-times{font-size:12.5px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.log-times .delta{font-weight:800}
+.log-times .delta.warn{color:var(--warn)} .log-times .delta.bad{color:var(--bad)}
+.log-del{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;padding:0;background:transparent;border:1px solid var(--border);color:var(--muted)}
+.log-del:hover{color:var(--bad);border-color:var(--bad-bd);background:var(--bad-bg)}
+.empty{text-align:center;color:var(--muted);font-size:13.5px;padding:22px 8px}
+
+/* ============================== VALIDATION ============================== */
+.toast{font-size:13.5px;font-weight:700;padding:11px 14px;border-radius:11px}
+.toast.warn{color:var(--bad);background:var(--bad-bg);border:1px solid var(--bad-bd)}
+.toast.good{color:var(--good);background:var(--good-bg);border:1px solid var(--good-bd)}
+
+/* ============================== DARK INPUT READABILITY ============================== */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{
+  color:#111 !important;background:var(--input-bg) !important;
+  border-color:var(--input-border) !important;caret-color:#111 !important;
+}
+[data-theme="dark"] input:disabled,[data-theme="dark"] select:disabled{
+  background:#c5cdd6 !important;color:#3a4654 !important;-webkit-text-fill-color:#3a4654 !important;
+}
 [data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit,
 [data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-text,
 [data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-month-field,
@@ -106,110 +246,139 @@ select{ -webkit-appearance:none; appearance:none; padding-right:34px; background
 [data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-year-field,
 [data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
 [data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-minute-field,
-[data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-ampm-field {
-  color: #111 !important;
-  -webkit-text-fill-color: #111 !important;
+[data-theme="dark"] input[type="datetime-local"]::-webkit-datetime-edit-ampm-field{
+  color:#111 !important;-webkit-text-fill-color:#111 !important;
 }
+[data-theme="dark"] input[type="number"]{color:#111 !important;-webkit-text-fill-color:#111 !important}
+[data-theme="dark"] input::placeholder,[data-theme="dark"] textarea::placeholder{color:var(--input-placeholder) !important}
+[data-theme="dark"] ::selection{background:rgba(43,140,255,0.28);color:#fff}
 
-/* Firefox date/time parts */
-[data-theme="dark"] input[type="datetime-local"]::-moz-focus-inner,
-[data-theme="dark"] input[type="datetime-local"]::-moz-placeholder {
-  color: #111 !important;
-}
-
-/* placeholder color */
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder,
-[data-theme="dark"] select::placeholder {
-  color: var(--input-placeholder) !important;
-}
-
-/* numeric inputs (number spin text) */
-[data-theme="dark"] input[type="number"]{
-  color:#111 !important;
-  -webkit-text-fill-color:#111 !important;
-}
-
-/* ensure selection highlight is visible */
-[data-theme="dark"] ::selection { background: rgba(11,102,195,0.18); color: #ffffff; }
-
-/* make primary button look good in dark */
-[data-theme="dark"] button.primary{
-  background:linear-gradient(180deg,#1e88ff,#0b66c3) !important;
-  box-shadow:0 6px 14px rgba(11,102,195,0.22);
-  border:1px solid rgba(255,255,255,0.15);
-  color:#fff !important;
+/* ============================== RESPONSIVE ============================== */
+@media (max-width:600px){
+  body{padding:12px}
+  .app{gap:13px}
+  .app-header{padding:14px}
+  .brand h1{font-size:17px}
+  .card{padding:15px;border-radius:14px}
+  .summary-grid{grid-template-columns:1fr}
+  .controls button{flex:1 1 auto}
+  .theme-btn .theme-name{display:none}
+  .theme-btn{padding:9px}
 }
 </style>
 </head>
 <body>
 
-<div class="card" role="main" aria-labelledby="title">
-  <h1 id="title">
-    <span>Shift Calculator</span>
-    <button id="themeBtn" class="icon-btn" title="Toggle theme (Light/Dark)" aria-label="Toggle theme">
-      <span id="themeIcon">☀️</span>
-      <span id="themeName" class="theme-label">Light</span>
-    </button>
-  </h1>
+<div class="app">
 
-  <div class="grid" role="form">
-    <div style="display:grid;gap:10px">
-
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">⏱</span>
       <div>
-        <label for="login">Login time</label>
-        <input id="login" type="datetime-local">
+        <h1>WorkShift Calculator</h1>
+        <p class="sub">Smart shift &amp; overtime tracker</p>
       </div>
-
-      <div>
-        <label>Shift length</label>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <input id="shiftHours" type="number" value="8" min="0" style="width:90px">
-          <span class="muted">hours</span>
-          <input id="shiftMins" type="number" value="30" min="0" max="59" style="width:90px">
-          <span class="muted">minutes</span>
-        </div>
-      </div>
-
-      <div>
-        <label for="mode">Mode</label>
-        <select id="mode">
-          <option value="none">None</option>
-          <option value="early">Early Leave</option>
-          <option value="overtime">Overtime</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="actualLogout">Actual logout</label>
-        <input id="actualLogout" type="datetime-local">
-      </div>
-
-      <div>
-        <div class="controls">
-          <button id="nowBtn" class="ghost">I'm logged in now</button>
-          <button id="calcBtn" class="primary">Calculate</button>
-          <button id="clearBtn" class="ghost">Clear</button>
-          <button id="copyBtn" class="ghost">Copy Summary</button>
-        </div>
-      </div>
-
     </div>
-  </div>
+    <button id="themeBtn" class="theme-btn" title="Toggle theme (Light/Dark)" aria-label="Toggle theme">
+      <span id="themeIcon">☀️</span>
+      <span id="themeName" class="theme-name">Light</span>
+    </button>
+  </header>
 
-  <div class="small muted" style="margin-top:12px">Timeline</div>
-  <div id="timeline" class="timeline"></div>
+  <!-- FORM -->
+  <section class="card">
+    <h2 class="card-title"><span class="dot"></span> Shift details</h2>
 
-  <div id="summary" class="summary" style="display:none">
-    <div id="summaryBadge" class="small" style="font-weight:700"></div>
-    <div id="summaryDetails" class="small" style="margin-top:8px"></div>
-  </div>
+    <div class="field">
+      <label for="role">Employee Role / Department</label>
+      <select id="role">
+        <option value="SD">Service Delivery (SD)</option>
+        <option value="HQ">Headquarters (HQ)</option>
+      </select>
+      <span class="hint" id="graceNote"></span>
+    </div>
 
-  <div id="validation" class="info"></div>
+    <div class="field">
+      <label for="login">Login time</label>
+      <input id="login" type="datetime-local">
+    </div>
+
+    <div class="field">
+      <label>Shift length <span class="hint">(set by role)</span></label>
+      <div class="shift-row">
+        <input id="shiftHours" type="number" min="0" disabled aria-label="Shift hours">
+        <span class="unit">hours</span>
+        <input id="shiftMins" type="number" min="0" max="59" disabled aria-label="Shift minutes">
+        <span class="unit">minutes</span>
+        <span class="lock" title="Locked by role profile">🔒 Locked</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="actualLogout">Actual logout <span class="hint">(leave empty for live countdown)</span></label>
+      <input id="actualLogout" type="datetime-local">
+    </div>
+
+    <div class="controls">
+      <button id="nowBtn" class="ghost">I'm logged in now</button>
+      <button id="calcBtn" class="primary">Calculate</button>
+      <button id="clearBtn" class="ghost">Clear</button>
+    </div>
+
+    <div id="liveTimer" class="live" hidden></div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="card">
+    <h2 class="card-title"><span class="dot"></span> Shift timeline</h2>
+    <div id="timeline" class="timeline-wrap">
+      <div class="tl-empty">Run a calculation to visualise your shift.</div>
+    </div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summary" class="card" hidden>
+    <div class="summary-head">
+      <span class="summary-title">Shift summary</span>
+      <span id="statusTag" class="tag neutral">—</span>
+    </div>
+    <div id="summaryGrid" class="summary-grid"></div>
+    <div class="controls" style="margin-top:16px">
+      <button id="logBtn" class="primary">Log Shift to History</button>
+      <button id="copyBtn" class="ghost">Share / Copy Summary</button>
+    </div>
+  </section>
+
+  <!-- VALIDATION / TOASTS -->
+  <div id="validation"></div>
+
+  <!-- HISTORY -->
+  <section class="card">
+    <div class="metrics">
+      <div class="metric ot">
+        <div class="label">📈 Total Overtime Balance</div>
+        <div class="value" id="totalOt">0h 0m</div>
+      </div>
+      <div class="metric def">
+        <div class="label">📉 Total Deficit Balance</div>
+        <div class="value" id="totalDef">0h 0m</div>
+      </div>
+    </div>
+
+    <div class="history-head" id="historyToggle">
+      <h2 class="card-title" style="margin:0"><span class="dot"></span> Past 7 Days Logs</h2>
+      <span class="chev" id="historyChev">▼</span>
+    </div>
+    <div id="historyList" class="history-list"></div>
+  </section>
+
 </div>
 
 <script>
-/* Theme toggle: light <-> dark only */
+/* =================================================================
+   THEME ENGINE  (light <-> dark)
+   ================================================================= */
 const themeBtn = document.getElementById('themeBtn');
 const themeIcon = document.getElementById('themeIcon');
 const themeName = document.getElementById('themeName');
@@ -218,69 +387,129 @@ const metaTheme = document.getElementById('meta-theme-color');
 function applyTheme(theme){
   if(theme === 'dark'){
     document.documentElement.setAttribute('data-theme','dark');
-    themeIcon.textContent = '🌙';
-    themeName.textContent = 'Dark';
-    metaTheme.setAttribute('content','#08121a');
+    themeIcon.textContent = '🌙'; themeName.textContent = 'Dark';
+    metaTheme.setAttribute('content','#0a0f16');
   } else {
     document.documentElement.removeAttribute('data-theme');
-    themeIcon.textContent = '☀️';
-    themeName.textContent = 'Light';
+    themeIcon.textContent = '☀️'; themeName.textContent = 'Light';
     metaTheme.setAttribute('content','#0b66c3');
   }
   localStorage.setItem('theme', theme);
 }
-
-/* init: stored preference or default light */
-const stored = localStorage.getItem('theme');
-if(stored === 'dark') applyTheme('dark'); else applyTheme('light');
-
-themeBtn.addEventListener('click', ()=>{
+applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+themeBtn.addEventListener('click', () => {
   const cur = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
-  const next = cur === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
 });
 
-/* Robust parser & clipboard fallback */
+/* =================================================================
+   HELPERS
+   ================================================================= */
+const $ = id => document.getElementById(id);
+const pad = n => (n < 10 ? '0' + n : '' + n);
+const fmt = d => `${(d.getHours()%12||12)}:${pad(d.getMinutes())} ${d.getHours()>=12?'PM':'AM'}`;
+
 function parseLocalDatetime(value){
   if(!value) return null;
-  const [datePart,timePart] = value.split("T");
+  const [datePart, timePart] = value.split("T");
   if(!datePart || !timePart) return null;
   const [y,m,d] = datePart.split("-").map(Number);
   const [hh,mm,ss] = timePart.split(":").map(Number);
-  const dt = new Date(y, (m-1), d, hh||0, mm||0, ss||0, 0);
+  const dt = new Date(y, m-1, d, hh||0, mm||0, ss||0, 0);
   return isNaN(dt.getTime()) ? null : dt;
 }
 async function copySafe(text){
   try{
     if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(text);
-      return true;
+      await navigator.clipboard.writeText(text); return true;
     }
-    const ta=document.createElement('textarea');
-    ta.value=text; ta.style.position='fixed'; ta.style.left='-9999px';
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
     document.body.appendChild(ta); ta.select();
-    const ok=document.execCommand('copy');
-    ta.remove(); return ok;
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
   }catch(e){ return false; }
 }
+function hms(ms){
+  const total = Math.max(0, Math.floor(ms/1000));
+  const h = Math.floor(total/3600);
+  const m = Math.floor((total%3600)/60);
+  const s = total%60;
+  return `${h} hours, ${m} minutes, ${s} seconds`;
+}
+function minToHM(mins){
+  mins = Math.round(Math.abs(mins));
+  return `${Math.floor(mins/60)}h ${mins%60}m`;
+}
 
-const $ = id => document.getElementById(id);
-const pad = n => (n<10 ? '0'+n : n);
-const fmt = d => `${(d.getHours()%12||12)}:${pad(d.getMinutes())} ${(d.getHours()>=12?'PM':'AM')}`;
-const msToHM = ms => { const mins = Math.round(ms/60000); return {h:Math.floor(Math.abs(mins)/60), m:Math.abs(mins%60)}; };
+/* =================================================================
+   ROLE RULE ENGINE
+   ================================================================= */
+const ROLE_CONFIG = {
+  SD: { hours:9, mins:0, grace:0,  profile:'Service Delivery', target:'9h 00m' },
+  HQ: { hours:8, mins:30, grace:15, profile:'HQ',              target:'8h 30m' }
+};
 
-const login = $('login');
+const roleSel = $('role');
 const shiftHours = $('shiftHours');
 const shiftMins = $('shiftMins');
+const graceNote = $('graceNote');
+const login = $('login');
 const actualLogout = $('actualLogout');
-const modeSel = $('mode');
-const summary = $('summary');
-const summaryBadge = $('summaryBadge');
-const summaryDetails = $('summaryDetails');
 const validation = $('validation');
+const summary = $('summary');
+const summaryGrid = $('summaryGrid');
+const statusTag = $('statusTag');
+const liveTimer = $('liveTimer');
 const timeline = $('timeline');
 
-const GRACE = 15;
+let GRACE = 0;
+let liveTimerId = null;
+let lastResult = null;
+
+function applyRole(){
+  const cfg = ROLE_CONFIG[roleSel.value];
+  shiftHours.value = cfg.hours;
+  shiftMins.value = pad(cfg.mins);
+  GRACE = cfg.grace;
+  graceNote.textContent = cfg.grace > 0
+    ? `Shift target ${cfg.target} · Grace ${cfg.grace} min — punching out within grace counts as no shortfall.`
+    : `Shift target ${cfg.target} · Grace 0 min — early leaves are flagged the exact minute before the ${cfg.hours}h mark.`;
+}
+roleSel.addEventListener('change', () => { applyRole(); clearLive(); });
+applyRole();
+
+/* =================================================================
+   LIVE COUNTDOWN / OVERTIME ENGINE
+   ================================================================= */
+function clearLive(){
+  if(liveTimerId){ clearInterval(liveTimerId); liveTimerId = null; }
+  liveTimer.hidden = true;
+}
+function startLive(expected){
+  clearLive();
+  const exp = expected.getTime();
+  const tick = () => {
+    const diff = exp - Date.now();
+    if(diff > 0){
+      liveTimer.className = 'live live-remaining';
+      liveTimer.textContent = `⏳ Time Remaining in Shift: ${hms(diff)}`;
+    } else {
+      liveTimer.className = 'live live-overtime';
+      liveTimer.textContent = `🔥 Current Overtime: ${hms(-diff)}`;
+    }
+  };
+  tick();
+  liveTimer.hidden = false;
+  liveTimerId = setInterval(tick, 1000);
+}
+
+/* =================================================================
+   CALCULATE
+   ================================================================= */
+function toast(type, msg, autoClear){
+  validation.innerHTML = `<div class="toast ${type}">${msg}</div>`;
+  if(autoClear) setTimeout(() => { validation.innerHTML = ''; }, autoClear);
+}
 
 $('nowBtn').onclick = () => {
   const n = new Date();
@@ -289,77 +518,242 @@ $('nowBtn').onclick = () => {
 };
 
 $('clearBtn').onclick = () => {
-  login.value = ''; actualLogout.value = ''; modeSel.value = 'none';
-  summary.style.display = 'none'; timeline.innerHTML = ''; validation.innerHTML = '';
+  login.value = ''; actualLogout.value = '';
+  summary.hidden = true; validation.innerHTML = '';
+  timeline.innerHTML = '<div class="tl-empty">Run a calculation to visualise your shift.</div>';
+  lastResult = null; clearLive();
 };
 
 $('calcBtn').onclick = () => {
-  validation.innerHTML = ''; timeline.innerHTML = ''; summary.style.display = 'none';
+  validation.innerHTML = ''; clearLive();
+  const cfg = ROLE_CONFIG[roleSel.value];
   const l = parseLocalDatetime(login.value);
-  if(!l){ validation.innerHTML = `<div class="warn">Please enter valid login time</div>`; return; }
-  const sh = Math.max(0, Number(shiftHours.value||0));
-  const sm = Math.max(0, Number(shiftMins.value||0));
-  const shiftMin = sh*60 + sm;
-  if(shiftMin <= 0){ validation.innerHTML = `<div class="warn">Shift length must be > 0</div>`; return; }
+  if(!l){ toast('warn', 'Please enter a valid login time.'); return; }
+
+  const shiftMin = cfg.hours*60 + cfg.mins;
   const expected = new Date(l.getTime() + shiftMin*60000);
   const aLogout = parseLocalDatetime(actualLogout.value);
-  let status = 'On schedule', missing = 0, missingRange = null, overtime = 0;
+
+  let status = 'Shift in progress', statusType = 'neutral';
+  let overtimeMin = 0, missingMin = 0, missingRange = null;
 
   if(aLogout){
-    if(aLogout < expected){
-      const diff = expected - aLogout;
-      if(diff <= GRACE*60000){ status = `Within ${GRACE}m grace — no missing`; modeSel.value = 'none'; }
-      else { status = 'Early Leave'; missing = diff; missingRange = {from:aLogout,to:expected}; modeSel.value = 'early'; }
-    } else if(aLogout > expected){ overtime = aLogout - expected; status = 'Overtime'; modeSel.value = 'overtime'; }
-    else { status = 'On time'; modeSel.value = 'none'; }
-  } else { status = 'Expected logout only'; modeSel.value = 'none'; }
+    if(aLogout.getTime() < expected.getTime()){
+      const diffMin = Math.round((expected - aLogout)/60000);
+      if(GRACE > 0 && diffMin <= GRACE){
+        status = 'Within Grace (No Shortfall)'; statusType = 'good';
+      } else {
+        status = 'Early Leave'; statusType = 'bad';
+        missingMin = diffMin; missingRange = { from:aLogout, to:expected };
+      }
+    } else if(aLogout.getTime() > expected.getTime()){
+      overtimeMin = Math.round((aLogout - expected)/60000);
+      status = 'Overtime'; statusType = 'warn';
+    } else {
+      status = 'On time'; statusType = 'good';
+    }
+  }
+
+  lastResult = { role:roleSel.value, cfg, login:l, expected, aLogout, status, statusType, overtimeMin, missingMin };
 
   drawTimeline(l, expected, aLogout, missingRange);
+  renderSummary();
 
-  const out = [];
-  out.push(`Login: ${fmt(l)} (${l.toLocaleDateString()})`);
-  out.push(`Expected logout: ${fmt(expected)} (${expected.toLocaleDateString()})`);
-  if(aLogout) out.push(`Actual logout: ${fmt(aLogout)} (${aLogout.toLocaleDateString()})`);
-  out.push(`Shift: ${sh}h ${sm}m`);
-  out.push(`Status: ${status}`);
-  if(missing > 0){ const t = msToHM(missing); out.push(`Missing: ${t.h}h ${t.m}m`); out.push(`Missing range: ${fmt(missingRange.from)} → ${fmt(missingRange.to)}`); }
-  if(overtime > 0){ const t = msToHM(overtime); out.push(`Overtime: ${t.h}h ${t.m}m`); }
-  summaryBadge.textContent = out[0] + ' • ' + out[1];
-  summaryDetails.innerHTML = out.slice(2).map(x=>`<div>${x}</div>`).join('');
-  summary.style.display = 'block';
+  if(!aLogout) startLive(expected);
 };
 
-function drawTimeline(l, expected, aLogout, missingRange){
-  timeline.innerHTML = '';
-  const padMS = 30*60000;
-  let end = expected;
-  if(aLogout && aLogout > end) end = aLogout;
-  const start = new Date(l.getTime() - padMS);
-  end = new Date(end.getTime() + padMS);
-  const total = end - start;
-  if(total <= 0) return;
-  const pct = dt => ((dt - start) / total) * 100;
-  function seg(cls, from, to){ const d = document.createElement('div'); d.className = 'seg '+cls; d.style.left = from + '%'; d.style.width = (to - from) + '%'; timeline.appendChild(d); }
-  seg('scheduled', Math.max(0, pct(l)), Math.min(100, pct(expected)));
-  const actualEnd = aLogout || expected;
-  seg('actual', Math.max(0, pct(l)), Math.min(100, pct(actualEnd)));
-  if(missingRange) seg('missing', Math.max(0, pct(missingRange.from)), Math.min(100, pct(missingRange.to)));
-  if(aLogout && aLogout > expected) seg('overtime', Math.max(0, pct(expected)), Math.min(100, pct(aLogout)));
+function renderSummary(){
+  const r = lastResult;
+  statusTag.className = `tag ${r.statusType}`;
+  statusTag.textContent = r.status;
+
+  const rows = [
+    ['Role profile', r.cfg.profile],
+    ['Shift target', r.cfg.target],
+    ['Login', fmt(r.login)],
+    ['Expected logout', fmt(r.expected)],
+    ['Actual logout', r.aLogout ? fmt(r.aLogout) : '—'],
+    ['Date', r.login.toLocaleDateString()]
+  ];
+  if(r.overtimeMin > 0) rows.push(['Overtime', minToHM(r.overtimeMin), 'full']);
+  if(r.missingMin > 0)  rows.push(['Shortfall', minToHM(r.missingMin), 'full']);
+
+  summaryGrid.innerHTML = rows.map(([k,v,cls]) =>
+    `<div class="s-item ${cls||''}"><div class="k">${k}</div><div class="v">${v}</div></div>`
+  ).join('');
+  summary.hidden = false;
 }
 
-/* Copy Summary */
+/* =================================================================
+   TIMELINE  (pill segments + textual markers)
+   ================================================================= */
+function drawTimeline(l, expected, aLogout, missingRange){
+  const padMS = 30*60000;
+  let endRef = expected.getTime();
+  if(aLogout && aLogout.getTime() > endRef) endRef = aLogout.getTime();
+  const start = l.getTime() - padMS;
+  const end = endRef + padMS;
+  const total = end - start;
+  const pct = ms => Math.max(0, Math.min(100, ((ms - start)/total)*100));
+
+  const lP = pct(l.getTime());
+  const eP = pct(expected.getTime());
+  const aEnd = aLogout ? aLogout.getTime() : null;
+
+  // scheduled row
+  let scheduledFill = `<div class="tl-fill scheduled" style="left:${lP}%;width:${eP-lP}%"></div>`;
+
+  // actual row
+  let actualFills = '';
+  if(aLogout){
+    const aP = pct(aEnd);
+    const greenEnd = Math.min(aP, eP);
+    actualFills += `<div class="tl-fill actual" style="left:${lP}%;width:${Math.max(0,greenEnd-lP)}%"></div>`;
+    if(missingRange){
+      const mF = pct(missingRange.from.getTime()), mT = pct(missingRange.to.getTime());
+      actualFills += `<div class="tl-fill missing" style="left:${mF}%;width:${mT-mF}%"></div>`;
+    }
+    if(aEnd > expected.getTime()){
+      actualFills += `<div class="tl-fill overtime" style="left:${eP}%;width:${aP-eP}%"></div>`;
+    }
+  }
+
+  // markers
+  let markers = `
+    <div class="marker m-login" style="left:${lP}%"><span class="tick"></span><span class="mlabel">[Login]</span><span class="mtime">${fmt(l)}</span></div>
+    <div class="marker m-expected" style="left:${eP}%"><span class="tick"></span><span class="mlabel">[Expected Logout]</span><span class="mtime">${fmt(expected)}</span></div>`;
+  if(aLogout){
+    markers += `<div class="marker m-actual" style="left:${pct(aEnd)}%"><span class="tick"></span><span class="mlabel">[Actual Logout]</span><span class="mtime">${fmt(aLogout)}</span></div>`;
+  }
+
+  timeline.innerHTML = `
+    <div class="timeline-track">
+      <div class="tl-row"><span class="tl-rowlabel">Scheduled</span>${scheduledFill}</div>
+      <div class="tl-row"><span class="tl-rowlabel">Actual</span>${actualFills}</div>
+    </div>
+    <div class="timeline-markers">${markers}</div>`;
+}
+
+/* =================================================================
+   STRUCTURED SHARE / COPY ENGINE
+   ================================================================= */
+function buildShareText(){
+  const r = lastResult;
+  return [
+    `📅 SHIFT SUMMARY - ${r.login.toLocaleDateString()}`,
+    `━━━━━━━━━━━━━━━━━━━━━━━━`,
+    `💼 Role Profile: ${r.cfg.profile}`,
+    `🛫 Login: ${fmt(r.login)}`,
+    `⏱️ Shift Target: ${r.cfg.target}`,
+    `🚪 Expected Logout: ${fmt(r.expected)}`,
+    `🏁 Actual Logout: ${r.aLogout ? fmt(r.aLogout) : '—'}`,
+    `📊 Status: ${r.status}`,
+    `------------------------`,
+    `Generated via WorkShift Calculator`
+  ].join('\n');
+}
+
 $('copyBtn').onclick = async () => {
-  if(summary.style.display === 'none'){ validation.innerHTML = `<div class="warn">Nothing to copy</div>`; return; }
-  const text = summaryBadge.textContent + '\n' + Array.from(summaryDetails.querySelectorAll('div')).map(d=>d.textContent).join('\n');
+  if(!lastResult){ toast('warn', 'Nothing to share yet — run a calculation first.'); return; }
+  const text = buildShareText();
+  if(navigator.share){
+    try{ await navigator.share({ title:'Shift Summary', text }); return; }
+    catch(e){ if(e && e.name === 'AbortError') return; /* fall through to clipboard */ }
+  }
   const ok = await copySafe(text);
-  if(ok){ validation.innerHTML = `<div class="good">Summary copied</div>`; setTimeout(()=>validation.innerHTML='',1400); }
-  else validation.innerHTML = `<div class="warn">Copy failed</div>`;
+  toast(ok ? 'good' : 'warn', ok ? 'Summary copied to clipboard.' : 'Copy failed.', 1600);
 };
 
-/* Optional: register service worker if present */
+/* =================================================================
+   LOCAL HISTORY ENGINE
+   ================================================================= */
+const LS_KEY = 'shiftLogs';
+function loadLogs(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)) || []; }catch(e){ return []; } }
+function saveLogs(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+$('logBtn').onclick = () => {
+  if(!lastResult){ toast('warn', 'Nothing to log yet.'); return; }
+  const r = lastResult;
+  const logs = loadLogs();
+  logs.push({
+    id: Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    ts: r.login.getTime(),
+    date: r.login.toLocaleDateString(),
+    role: r.role,
+    loginTime: fmt(r.login),
+    expectedLogout: fmt(r.expected),
+    actualLogout: r.aLogout ? fmt(r.aLogout) : '—',
+    netStatus: r.status,
+    statusType: r.statusType,
+    overtimeMinutes: r.overtimeMin,
+    missingMinutes: r.missingMin
+  });
+  saveLogs(logs);
+  renderHistory();
+  toast('good', 'Shift logged to history.', 1600);
+};
+
+function deleteLog(id){
+  saveLogs(loadLogs().filter(l => l.id !== id));
+  renderHistory();
+}
+
+function renderHistory(){
+  const sevenAgo = Date.now() - 7*24*60*60*1000;
+  const recent = loadLogs()
+    .filter(l => l.ts >= sevenAgo)
+    .sort((a,b) => b.ts - a.ts);
+
+  let totalOt = 0, totalDef = 0;
+  recent.forEach(l => { totalOt += l.overtimeMinutes || 0; totalDef += l.missingMinutes || 0; });
+  $('totalOt').textContent = minToHM(totalOt);
+  $('totalDef').textContent = minToHM(totalDef);
+
+  const list = $('historyList');
+  if(!recent.length){
+    list.innerHTML = `<div class="empty">No shifts logged in the past 7 days.</div>`;
+    return;
+  }
+  list.innerHTML = recent.map(l => {
+    let delta = '';
+    if(l.overtimeMinutes > 0) delta = `<span class="delta warn">+${minToHM(l.overtimeMinutes)} OT</span>`;
+    else if(l.missingMinutes > 0) delta = `<span class="delta bad">-${minToHM(l.missingMinutes)} short</span>`;
+    return `
+      <div class="log">
+        <div class="log-main">
+          <div class="log-top">
+            <span class="log-date">${l.date}</span>
+            <span class="log-role ${l.role}">${l.role}</span>
+            <span class="tag ${l.statusType}">${l.netStatus}</span>
+          </div>
+          <div class="log-times">
+            🛫 ${l.loginTime} → 🏁 ${l.actualLogout} ${delta}
+          </div>
+        </div>
+        <button class="log-del" title="Delete record" aria-label="Delete record" data-id="${l.id}">🗑️</button>
+      </div>`;
+  }).join('');
+
+  list.querySelectorAll('.log-del').forEach(btn =>
+    btn.addEventListener('click', () => deleteLog(btn.dataset.id))
+  );
+}
+
+/* Collapsible ledger */
+$('historyToggle').addEventListener('click', () => {
+  const list = $('historyList');
+  list.classList.toggle('collapsed');
+  $('historyChev').style.transform = list.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
+});
+
+renderHistory();
+
+/* =================================================================
+   SERVICE WORKER
+   ================================================================= */
 if('serviceWorker' in navigator){
-  window.addEventListener('load', async ()=> {
-    try{ await navigator.serviceWorker.register('/sw.js'); console.log('SW registered'); } catch(e){ console.warn('SW failed', e); }
+  window.addEventListener('load', async () => {
+    try{ await navigator.serviceWorker.register('/sw.js'); }catch(e){ /* ignore */ }
   });
 }
 </script>
