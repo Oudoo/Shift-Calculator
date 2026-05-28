@@ -3,47 +3,48 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WorkShift Calculator</title>
+<title>Centro — Shift Calculator</title>
 
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0b66c3" id="meta-theme-color">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='96,50 73,89.84 27,89.84 4,50 27,10.16 73,10.16' fill='none' stroke='%2300527e' stroke-width='9' stroke-linejoin='round'/%3E%3Cpolygon points='78,50 64,74.25 36,74.25 22,50 36,25.75 64,25.75' fill='none' stroke='%230a83ad' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#00527e" id="meta-theme-color">
 
 <style>
 /* ============================ THEME TOKENS ============================ */
 :root{
-  --bg:#eef2f7;
-  --text:#0f1720;
-  --muted:#5b6b80;
-  --accent:#0b66c3;
-  --accent-2:#1e88ff;
+  --bg:#eef3f6;
+  --text:#0e1c24;
+  --muted:#54697a;
+  --accent:#00527e;
+  --accent-2:#0a83ad;
   --card:#ffffff;
-  --panel:#f5f8fc;
-  --border:rgba(15,23,32,0.08);
-  --shadow:0 10px 30px rgba(15,23,42,0.08);
+  --panel:#f3f8fb;
+  --border:rgba(0,40,60,0.09);
+  --shadow:0 10px 30px rgba(0,40,60,0.10);
 
   --good:#0f9d58;       --good-bg:#e7f7ee;   --good-bd:#bde8cf;
   --bad:#e0392b;        --bad-bg:#fdeceb;    --bad-bd:#f6c9c4;
   --warn:#d97706;       --warn-bg:#fff4e0;   --warn-bd:#f6dcab;
-  --neutral:#5b6b80;    --neutral-bg:#eef2f7;--neutral-bd:#d8e0ec;
+  --neutral:#54697a;    --neutral-bg:#eef3f6;--neutral-bd:#d4e0e8;
 
   --input-bg:#ffffff;
-  --input-border:rgba(15,23,32,0.14);
+  --input-border:rgba(0,40,60,0.16);
   --input-text:var(--text);
-  --input-placeholder:rgba(15,23,32,0.4);
-  --focus-ring:rgba(11,102,195,0.18);
+  --input-placeholder:rgba(0,40,60,0.4);
+  --focus-ring:rgba(0,82,126,0.18);
 
   --transition-fast:200ms ease;
 }
 
 /* ============================== DARK THEME ============================== */
 [data-theme="dark"]{
-  --bg:#0a0f16;
-  --text:#e6eef6;
-  --muted:#9fb0c8;
-  --accent:#2b8fff;
-  --accent-2:#1e88ff;
-  --card:#0f1822;
-  --panel:#0b131c;
+  --bg:#08121a;
+  --text:#e3eef4;
+  --muted:#93aabb;
+  --accent:#3aa9d4;
+  --accent-2:#1c87b3;
+  --card:#0e1a24;
+  --panel:#0a141d;
   --border:rgba(255,255,255,0.08);
   --shadow:0 14px 40px rgba(0,0,0,0.45);
 
@@ -57,7 +58,7 @@
   --input-border:rgba(255,255,255,0.14);
   --input-text:#111;
   --input-placeholder:rgba(17,17,17,0.4);
-  --focus-ring:rgba(43,140,255,0.4);
+  --focus-ring:rgba(58,169,212,0.4);
 }
 
 *{box-sizing:border-box}
@@ -65,8 +66,8 @@ html,body{margin:0}
 body{
   font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   background:
-    radial-gradient(1200px 600px at 100% -10%, rgba(43,140,255,0.10), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(11,102,195,0.10), transparent 55%),
+    radial-gradient(1200px 600px at 100% -10%, rgba(10,131,173,0.12), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(0,82,126,0.12), transparent 55%),
     var(--bg);
   color:var(--text);
   padding:16px;
@@ -142,10 +143,12 @@ input:disabled,select:disabled{
 .shift-row .unit{font-size:13px;color:var(--muted);font-weight:600}
 .lock{margin-left:auto;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;font-weight:600}
 
+.switch{flex-direction:row !important;align-items:center;gap:10px;font-weight:600;font-size:13px;cursor:pointer}
+.switch input{width:auto;padding:0;margin:0;accent-color:var(--accent);transform:scale(1.15)}
 .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
 button{cursor:pointer;font-weight:700}
 button:active{transform:scale(.97)}
-button.primary{background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#fff;border:none;box-shadow:0 6px 16px rgba(11,102,195,0.28)}
+button.primary{background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#fff;border:none;box-shadow:0 6px 16px rgba(0,82,126,0.30)}
 button.ghost{background:transparent;color:var(--text);border:1px solid var(--input-border)}
 [data-theme="dark"] button.ghost{color:var(--text);border-color:var(--border)}
 button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad-bd)}
@@ -165,17 +168,21 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,0)}50%{box-shadow:0 0 0 5px rgba(217,119,6,0.12)}}
 
 /* ============================== TIMELINE ============================== */
-.timeline-wrap{margin-top:4px}
-.timeline-track{position:relative;display:flex;flex-direction:column;gap:8px;padding:4px 0}
-.tl-row{position:relative;height:16px;border-radius:999px;background:var(--panel);border:1px solid var(--border);overflow:hidden}
+.timeline-wrap{--tl-gutter:78px;margin-top:4px}
+.timeline-track{position:relative}
+.tl-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.tl-row:last-child{margin-bottom:0}
+.tl-cap{flex:none;width:var(--tl-gutter);font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted)}
+.tl-bar{position:relative;flex:1;height:16px;border-radius:999px;background:var(--panel);border:1px solid var(--border);overflow:hidden}
 .tl-fill{position:absolute;top:0;height:100%;border-radius:999px;transition:left .5s ease,width .5s ease}
-.tl-fill.scheduled{background:linear-gradient(90deg,rgba(43,140,255,.55),rgba(11,102,195,.75))}
+.tl-fill.scheduled{background:linear-gradient(90deg,rgba(10,131,173,.65),rgba(0,82,126,.9))}
 .tl-fill.actual{background:linear-gradient(90deg,var(--good),#2bbd7a)}
 .tl-fill.missing{background:repeating-linear-gradient(45deg,var(--bad),var(--bad) 6px,rgba(224,57,43,.7) 6px,rgba(224,57,43,.7) 12px)}
 .tl-fill.overtime{background:linear-gradient(90deg,#f59e0b,var(--warn))}
-.tl-rowlabel{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);pointer-events:none}
-.timeline-markers{position:relative;height:46px;margin-top:6px}
-.marker{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;max-width:120px}
+.timeline-markers{position:relative;height:48px;margin-top:9px;margin-left:calc(var(--tl-gutter) + 10px)}
+.marker{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;max-width:130px}
+.marker.edge-left{transform:translateX(0);align-items:flex-start}
+.marker.edge-right{transform:translateX(-100%);align-items:flex-end}
 .marker .tick{width:2px;height:12px;border-radius:2px;background:var(--muted)}
 .marker .mlabel{font-size:11px;font-weight:800;white-space:nowrap}
 .marker .mtime{font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap}
@@ -207,6 +214,23 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
 .metric.ot .label{color:var(--warn)} .metric.def .label{color:var(--bad)}
 .metric .value{font-size:24px;font-weight:900;margin-top:6px;font-variant-numeric:tabular-nums}
 .metric.ot .value{color:var(--warn)} .metric.def .value{color:var(--bad)}
+
+/* ============================== ANALYTICS ============================== */
+.analytics{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+.an-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.an-title{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.an-stats{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;font-weight:800}
+.an-pill{padding:3px 9px;border-radius:999px;border:1px solid;color:var(--muted);background:var(--neutral-bg);border-color:var(--neutral-bd)}
+.an-pill.good{color:var(--good);background:var(--good-bg);border-color:var(--good-bd)}
+.an-pill.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn-bd)}
+.an-pill.bad{color:var(--bad);background:var(--bad-bg);border-color:var(--bad-bd)}
+.chart{display:flex;align-items:flex-end;gap:6px;height:104px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}
+.bar .col-wrap{width:100%;display:flex;align-items:flex-end;justify-content:center;flex:1}
+.bar .col{width:100%;max-width:30px;min-height:3px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,var(--accent-2),var(--accent));transition:height .45s ease}
+.bar .col.zero{background:var(--neutral-bd)}
+.bar .lbl{font-size:10px;color:var(--muted);font-weight:800}
+.bar .val{font-size:9.5px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums;min-height:12px}
 
 /* ============================== HISTORY ============================== */
 .history-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
@@ -251,7 +275,7 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
 }
 [data-theme="dark"] input[type="number"]{color:#111 !important;-webkit-text-fill-color:#111 !important}
 [data-theme="dark"] input::placeholder,[data-theme="dark"] textarea::placeholder{color:var(--input-placeholder) !important}
-[data-theme="dark"] ::selection{background:rgba(43,140,255,0.28);color:#fff}
+[data-theme="dark"] ::selection{background:rgba(58,169,212,0.30);color:#fff}
 
 /* ============================== RESPONSIVE ============================== */
 @media (max-width:600px){
@@ -264,6 +288,9 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
   .controls button{flex:1 1 auto}
   .theme-btn .theme-name{display:none}
   .theme-btn{padding:9px}
+  .timeline-wrap{--tl-gutter:58px}
+  .marker .mlabel{font-size:10px}
+  .chart{height:88px}
 }
 </style>
 </head>
@@ -274,10 +301,15 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
   <!-- HEADER -->
   <header class="app-header">
     <div class="brand">
-      <span class="brand-mark">⏱</span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" width="27" height="27">
+          <polygon points="96,50 73,89.84 27,89.84 4,50 27,10.16 73,10.16" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round"/>
+          <polygon points="78,50 64,74.25 36,74.25 22,50 36,25.75 64,25.75" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="6" stroke-linejoin="round"/>
+        </svg>
+      </span>
       <div>
-        <h1>WorkShift Calculator</h1>
-        <p class="sub">Smart shift &amp; overtime tracker</p>
+        <h1>Centro</h1>
+        <p class="sub">Shift &amp; Overtime Calculator</p>
       </div>
     </div>
     <button id="themeBtn" class="theme-btn" title="Toggle theme (Light/Dark)" aria-label="Toggle theme">
@@ -320,13 +352,20 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
       <input id="actualLogout" type="datetime-local">
     </div>
 
+    <div class="field">
+      <label class="switch" for="alertToggle">
+        <input type="checkbox" id="alertToggle">
+        <span>🔔 Notify me when my shift ends / overtime starts</span>
+      </label>
+    </div>
+
     <div class="controls">
       <button id="nowBtn" class="ghost">I'm logged in now</button>
       <button id="calcBtn" class="primary">Calculate</button>
       <button id="clearBtn" class="ghost">Clear</button>
     </div>
 
-    <div id="liveTimer" class="live" hidden></div>
+    <div id="liveTimer" class="live" hidden aria-live="polite"></div>
   </section>
 
   <!-- TIMELINE -->
@@ -366,11 +405,26 @@ button.danger{background:transparent;color:var(--bad);border:1px solid var(--bad
       </div>
     </div>
 
+    <div class="analytics">
+      <div class="an-head">
+        <span class="an-title">Worked hours · last 7 days</span>
+        <span class="an-stats" id="punctuality"></span>
+      </div>
+      <div class="chart" id="chart"></div>
+    </div>
+
     <div class="history-head" id="historyToggle">
       <h2 class="card-title" style="margin:0"><span class="dot"></span> Past 7 Days Logs</h2>
       <span class="chev" id="historyChev">▼</span>
     </div>
     <div id="historyList" class="history-list"></div>
+
+    <div class="controls" style="margin-top:14px">
+      <button id="exportCsvBtn" class="ghost">Export CSV</button>
+      <button id="exportJsonBtn" class="ghost">Export JSON</button>
+      <button id="importBtn" class="ghost">Import JSON</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+    </div>
   </section>
 
 </div>
@@ -388,11 +442,11 @@ function applyTheme(theme){
   if(theme === 'dark'){
     document.documentElement.setAttribute('data-theme','dark');
     themeIcon.textContent = '🌙'; themeName.textContent = 'Dark';
-    metaTheme.setAttribute('content','#0a0f16');
+    metaTheme.setAttribute('content','#08121a');
   } else {
     document.documentElement.removeAttribute('data-theme');
     themeIcon.textContent = '☀️'; themeName.textContent = 'Light';
-    metaTheme.setAttribute('content','#0b66c3');
+    metaTheme.setAttribute('content','#00527e');
   }
   localStorage.setItem('theme', theme);
 }
@@ -461,6 +515,7 @@ const summaryGrid = $('summaryGrid');
 const statusTag = $('statusTag');
 const liveTimer = $('liveTimer');
 const timeline = $('timeline');
+const alertToggle = $('alertToggle');
 
 let GRACE = 0;
 let liveTimerId = null;
@@ -485,9 +540,17 @@ function clearLive(){
   if(liveTimerId){ clearInterval(liveTimerId); liveTimerId = null; }
   liveTimer.hidden = true;
 }
+function notifyShiftEnd(){
+  try{
+    if(alertToggle.checked && 'Notification' in window && Notification.permission === 'granted'){
+      new Notification('Shift complete', { body:'Your expected logout time has passed — overtime has started.' });
+    }
+  }catch(e){ /* ignore */ }
+}
 function startLive(expected){
   clearLive();
   const exp = expected.getTime();
+  let notified = (exp - Date.now()) <= 0; // already past on (re)start → don't fire
   const tick = () => {
     const diff = exp - Date.now();
     if(diff > 0){
@@ -496,12 +559,22 @@ function startLive(expected){
     } else {
       liveTimer.className = 'live live-overtime';
       liveTimer.textContent = `🔥 Current Overtime: ${hms(-diff)}`;
+      if(!notified){ notified = true; notifyShiftEnd(); }
     }
   };
   tick();
   liveTimer.hidden = false;
   liveTimerId = setInterval(tick, 1000);
 }
+alertToggle.addEventListener('change', () => {
+  if(!alertToggle.checked) return;
+  if(!('Notification' in window)){ alertToggle.checked = false; toast('warn','Notifications are not supported on this device.', 2400); return; }
+  if(Notification.permission === 'granted') return;
+  if(Notification.permission === 'denied'){ alertToggle.checked = false; toast('warn','Notifications are blocked in your browser settings.', 2800); return; }
+  Notification.requestPermission().then(p => {
+    if(p !== 'granted'){ alertToggle.checked = false; toast('warn','Notification permission was not granted.', 2400); }
+  });
+});
 
 /* =================================================================
    CALCULATE
@@ -521,10 +594,10 @@ $('clearBtn').onclick = () => {
   login.value = ''; actualLogout.value = '';
   summary.hidden = true; validation.innerHTML = '';
   timeline.innerHTML = '<div class="tl-empty">Run a calculation to visualise your shift.</div>';
-  lastResult = null; clearLive();
+  lastResult = null; clearLive(); clearActiveShift();
 };
 
-$('calcBtn').onclick = () => {
+function calculate(){
   validation.innerHTML = ''; clearLive();
   const cfg = ROLE_CONFIG[roleSel.value];
   const l = parseLocalDatetime(login.value);
@@ -559,8 +632,27 @@ $('calcBtn').onclick = () => {
   drawTimeline(l, expected, aLogout, missingRange);
   renderSummary();
 
-  if(!aLogout) startLive(expected);
-};
+  if(aLogout){ clearActiveShift(); }
+  else { startLive(expected); saveActiveShift(roleSel.value, login.value); }
+}
+$('calcBtn').onclick = calculate;
+
+/* =================================================================
+   ACTIVE (IN-PROGRESS) SHIFT PERSISTENCE
+   ================================================================= */
+const ACTIVE_KEY = 'activeShift';
+function saveActiveShift(role, loginValue){
+  try{ localStorage.setItem(ACTIVE_KEY, JSON.stringify({ role, login: loginValue })); }catch(e){}
+}
+function clearActiveShift(){ try{ localStorage.removeItem(ACTIVE_KEY); }catch(e){} }
+function restoreActiveShift(){
+  let a = null;
+  try{ a = JSON.parse(localStorage.getItem(ACTIVE_KEY)); }catch(e){ a = null; }
+  if(!a || !a.login || !ROLE_CONFIG[a.role]) return;
+  roleSel.value = a.role; applyRole();
+  login.value = a.login; actualLogout.value = '';
+  calculate();
+}
 
 function renderSummary(){
   const r = lastResult;
@@ -618,18 +710,17 @@ function drawTimeline(l, expected, aLogout, missingRange){
     }
   }
 
-  // markers
-  let markers = `
-    <div class="marker m-login" style="left:${lP}%"><span class="tick"></span><span class="mlabel">[Login]</span><span class="mtime">${fmt(l)}</span></div>
-    <div class="marker m-expected" style="left:${eP}%"><span class="tick"></span><span class="mlabel">[Expected Logout]</span><span class="mtime">${fmt(expected)}</span></div>`;
-  if(aLogout){
-    markers += `<div class="marker m-actual" style="left:${pct(aEnd)}%"><span class="tick"></span><span class="mlabel">[Actual Logout]</span><span class="mtime">${fmt(aLogout)}</span></div>`;
-  }
+  // markers (edge-aware alignment so labels never overflow the card)
+  const edge = p => p < 12 ? ' edge-left' : (p > 88 ? ' edge-right' : '');
+  const marker = (cls, p, label, time) =>
+    `<div class="marker ${cls}${edge(p)}" style="left:${p}%"><span class="tick"></span><span class="mlabel">${label}</span><span class="mtime">${time}</span></div>`;
+  let markers = marker('m-login', lP, '[Login]', fmt(l)) + marker('m-expected', eP, '[Expected Logout]', fmt(expected));
+  if(aLogout){ markers += marker('m-actual', pct(aEnd), '[Actual Logout]', fmt(aLogout)); }
 
   timeline.innerHTML = `
     <div class="timeline-track">
-      <div class="tl-row"><span class="tl-rowlabel">Scheduled</span>${scheduledFill}</div>
-      <div class="tl-row"><span class="tl-rowlabel">Actual</span>${actualFills}</div>
+      <div class="tl-row"><span class="tl-cap">Scheduled</span><div class="tl-bar">${scheduledFill}</div></div>
+      <div class="tl-row"><span class="tl-cap">Actual</span><div class="tl-bar">${actualFills}</div></div>
     </div>
     <div class="timeline-markers">${markers}</div>`;
 }
@@ -649,7 +740,7 @@ function buildShareText(){
     `🏁 Actual Logout: ${r.aLogout ? fmt(r.aLogout) : '—'}`,
     `📊 Status: ${r.status}`,
     `------------------------`,
-    `Generated via WorkShift Calculator`
+    `Generated via Centro Shift Calculator`
   ].join('\n');
 }
 
@@ -689,6 +780,7 @@ $('logBtn').onclick = () => {
     missingMinutes: r.missingMin
   });
   saveLogs(logs);
+  clearActiveShift();
   renderHistory();
   toast('good', 'Shift logged to history.', 1600);
 };
@@ -708,6 +800,8 @@ function renderHistory(){
   recent.forEach(l => { totalOt += l.overtimeMinutes || 0; totalDef += l.missingMinutes || 0; });
   $('totalOt').textContent = minToHM(totalOt);
   $('totalDef').textContent = minToHM(totalDef);
+
+  renderAnalytics(recent);
 
   const list = $('historyList');
   if(!recent.length){
@@ -739,6 +833,99 @@ function renderHistory(){
   );
 }
 
+/* =================================================================
+   ANALYTICS  (7-day worked-hours chart + punctuality)
+   ================================================================= */
+function workedMinutes(l){
+  const cfg = ROLE_CONFIG[l.role];
+  const base = cfg ? (cfg.hours*60 + cfg.mins) : 0;
+  return Math.max(0, base + (l.overtimeMinutes||0) - (l.missingMinutes||0));
+}
+function renderAnalytics(recent){
+  const days = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  for(let i=6;i>=0;i--){
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    days.push({ start:d.getTime(), end:d.getTime()+86400000, mins:0,
+                label:d.toLocaleDateString(undefined,{weekday:'short'}) });
+  }
+  recent.forEach(l => {
+    const b = days.find(d => l.ts >= d.start && l.ts < d.end);
+    if(b) b.mins += workedMinutes(l);
+  });
+  const maxMins = Math.max(60, ...days.map(d => d.mins));
+  $('chart').innerHTML = days.map(d => {
+    const h = Math.round((d.mins/maxMins)*100);
+    const val = d.mins > 0 ? (Math.round(d.mins/6)/10) + 'h' : '';
+    return `<div class="bar"><div class="col-wrap"><div class="col ${d.mins>0?'':'zero'}" style="height:${d.mins>0?h:6}%"></div></div><div class="lbl">${d.label}</div><div class="val">${val}</div></div>`;
+  }).join('');
+
+  let good=0, warn=0, bad=0;
+  recent.forEach(l => { if(l.statusType==='good') good++; else if(l.statusType==='warn') warn++; else if(l.statusType==='bad') bad++; });
+  const counted = good+warn+bad;
+  const stats = $('punctuality');
+  if(!counted){ stats.innerHTML = `<span class="an-pill">No completed shifts</span>`; }
+  else {
+    const pct = Math.round((good/counted)*100);
+    stats.innerHTML =
+      `<span class="an-pill good">${pct}% on-time</span>` +
+      (warn ? `<span class="an-pill warn">${warn} OT</span>` : '') +
+      (bad ? `<span class="an-pill bad">${bad} early</span>` : '');
+  }
+}
+
+/* =================================================================
+   EXPORT / IMPORT
+   ================================================================= */
+function downloadFile(filename, content, mime){
+  const blob = new Blob([content], { type:mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function csvCell(v){ return `"${String(v).replace(/"/g,'""')}"`; }
+function exportCsv(){
+  const logs = loadLogs();
+  if(!logs.length){ toast('warn', 'No history to export.', 1600); return; }
+  const header = ['date','role','loginTime','expectedLogout','actualLogout','netStatus','overtimeMinutes','missingMinutes'];
+  const rows = logs.map(l => header.map(k => csvCell(l[k] != null ? l[k] : '')).join(','));
+  downloadFile('centro-shift-history.csv', [header.join(','), ...rows].join('\r\n'), 'text/csv');
+  toast('good', 'CSV exported.', 1600);
+}
+function exportJson(){
+  const logs = loadLogs();
+  if(!logs.length){ toast('warn', 'No history to export.', 1600); return; }
+  downloadFile('centro-shift-history.json', JSON.stringify(logs, null, 2), 'application/json');
+  toast('good', 'JSON exported.', 1600);
+}
+function importJson(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if(!Array.isArray(data)) throw new Error('not an array');
+      const valid = data.filter(l => l && typeof l === 'object' && 'ts' in l && 'role' in l);
+      const merged = loadLogs();
+      const seen = new Set(merged.map(l => l.id));
+      valid.forEach(l => { if(!l.id) l.id = l.ts + '_' + Math.random().toString(36).slice(2,7); if(!seen.has(l.id)){ merged.push(l); seen.add(l.id); } });
+      saveLogs(merged);
+      renderHistory();
+      toast('good', `Imported ${valid.length} record(s).`, 1800);
+    }catch(e){ toast('warn', 'Import failed — invalid JSON file.', 2200); }
+  };
+  reader.readAsText(file);
+}
+$('exportCsvBtn').onclick = exportCsv;
+$('exportJsonBtn').onclick = exportJson;
+$('importBtn').onclick = () => $('importFile').click();
+$('importFile').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  if(f) importJson(f);
+  e.target.value = '';
+});
+
 /* Collapsible ledger */
 $('historyToggle').addEventListener('click', () => {
   const list = $('historyList');
@@ -747,6 +934,7 @@ $('historyToggle').addEventListener('click', () => {
 });
 
 renderHistory();
+restoreActiveShift();
 
 /* =================================================================
    SERVICE WORKER
